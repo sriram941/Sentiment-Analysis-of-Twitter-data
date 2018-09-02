@@ -17,10 +17,10 @@ from IPython.display import display
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-consumer_key = '9X1XrxxN1gdrb0RG5NYcGZRAb'
-consumer_secret = 'rh6JQCuIIMMrdJSwuZLXMh6uZWbuWeFGssE6SxePyhC0q9Iwln'
-access_token = '898570198923452417-SWjYnkMxLhSBD2bWtaMUGr8HGonyXYG'
-access_token_secret = 'PYkBMJNPh27mrQUiA8oUGiYFGHNSwAA94y0imkwpaHpVu'
+consumer_key = 'xxxxx'
+consumer_secret = 'xxxx'
+access_token = 'xxx'
+access_token_secret = 'xxx'
 
 
 

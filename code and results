@@ -1,0 +1,499 @@
+
+Data_mining(Python)
+ Import Notebook
+
+
+
+
+import tweepy
+import csv #comma sepatated values- used for arranging tabular data
+import pandas as pd #pandas is used to handle data
+import numpy as np #for numeric data
+from textblob import TextBlob
+import re   #Regualar expressions
+
+#displaying and graph plotting
+from IPython.display import display
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+consumer_key = '9X1XrxxN1gdrb0RG5NYcGZRAb'
+consumer_secret = 'rh6JQCuIIMMrdJSwuZLXMh6uZWbuWeFGssE6SxePyhC0q9Iwln'
+access_token = '898570198923452417-SWjYnkMxLhSBD2bWtaMUGr8HGonyXYG'
+access_token_secret = 'PYkBMJNPh27mrQUiA8oUGiYFGHNSwAA94y0imkwpaHpVu'
+
+
+
+
+
+
+
+
+
+
+
+def twitter_setup():
+  #setting up connection using access token and authentication
+  auth= tweepy.OAuthHandler(consumer_key, consumer_secret)
+  auth.set_access_token(access_token, access_token_secret)
+  
+  #Return API with authentication
+  api= tweepy.API(auth)
+  return api
+
+
+
+
+
+
+
+# we now have to extract the streaming tweets from the API
+# we have to use the tweepy function extractor.user_timeline(screen_name, count)
+
+extractor = twitter_setup()
+
+tweets = extractor.user_timeline(screen_name="bitcoin", count=300)
+print "number of tweets extracted= \n".format(len(tweets))
+print ("15 recent tweets:\n")
+for tweet in tweets[:15]:
+  print(tweet.text)
+
+number of tweets extracted= 
+
+15 recent tweets:
+
+More colored coins and tokens coming to #BitcoinCash: https://t.co/SZ50gZP2K0 launches a BCH-fueled Colored Coins m… https://t.co/puYiZTG1h6
+RT @PixelWallet: Update #PixelWallet on Google play store is live be one of the first people to send #BitcoinCash in a picture! Live on Mai…
+"Bitmain Technologies Ltd., the world’s biggest producer of cryptocurrency mining chips, is planning a Hong Kong in… https://t.co/60trbsKH6i
+Coinbase Continues To Add 50,000 Users a Day During Bear Market
+
+https://t.co/LZFQjYWa9B
+Bitmain holds more than 1 million BCH and almost no Ethereum. Seems like they have been converting BTC to BCH.… https://t.co/o0kW5Mzsfl
+https://t.co/Q5PM9Dn8Fr is a project for the Bitcoin Cash (BCH) chain that provides any individual or organization… https://t.co/3yH9Mmi3IO
+RT @BitcoinCashNQ: #BitcoinCash VENDING MACHINE IS LIVE AT @StrandFitness! NQ's 1st BCH only vending machine is ready to dole out BCH direc…
+"In order for cryptocurrencies to be accepted by the mainstream, they must be spent and used as traditional monies:… https://t.co/PyavUcTxUl
+Bitcoin mining giant Bitmain to invest in $500M cryptocurrency mining farm in Texas
+
+https://t.co/uuwP3kYlYg
+RT @jaimexbt: Taking #beers with #BitcoinCash #crypto @RamonQuesadaT @WamalaXtw https://t.co/XQOqADwj0Y
+Bitpico, a controversial mischief-maker within the world of bitcoin, has allegedly rage-quit BTC altogether. The ps… https://t.co/FYKFWX5oc2
+It comes as no surprise that the most functional cryptocurrency is also the most used in commerce. Embarrassing tha… https://t.co/fM8xY5wAwo
+Follow @banned_r to see the kinds of posts that get one banned from r/Bitcoin 
+
+#reddit #censorship #bitcoin… https://t.co/XnMZ4qFOXJ
+Hundreds gathered in Hong Kong yesterday to mark the first birthday of Bitcoin Cash. @southtopia @bitsonlinecom
+
+https://t.co/E4ygg4gyR0
+"It’s been a year since the two-year schism in the community over Bitcoin’s scaling approach culminated in the bloc… https://t.co/aCUj1eHCFj
+
+
+
+
+
+
+#Test1
+import tweepy
+max_tweet=50000000
+
+for tweet in tweepy.Cursor(extractor.search ,q='#bitcoin or #satoshi' ,rpp=100).items(max_tweet):
+  print(tweet.text)
+  pass
+
+#here auto filteration is applied to remove dupicates, quotes, spam, tweets wirtten in other languages than English and tweets with url's
+
+who is #satoshi
+Is the name of the founder and inventor of the (#bitcoin). There are many hypotheses about the ide… https://t.co/Y5yJHIgLW5
+who is #satoshi
+Is the name of the founder and inventor of the (#bitcoin). There are many hypotheses about the ide… https://t.co/ycWFu4sU6X
+who is #satoshi
+Is the name of the founder and inventor of the (#bitcoin). There are many hypotheses about the ide… https://t.co/8xiisQyPUM
+who is #satoshi
+Is the name of the founder and inventor of the (#bitcoin). There are many hypotheses about the ide… https://t.co/DHB5sK4XAX
+@econoar Consider the numbers: 10 minute blocks, 50 #BTC block reward, and the #halving every 4 yrs. This algorithm… https://t.co/MxeRQKL403
+who is #satoshi
+Is the name of the founder and inventor of the (#bitcoin). There are many hypotheses about the ide… https://t.co/zKPw0iW053
+RT @BitcoinNorth: If you divided all currently mined #Bitcoin by the population of the planet there are only 0.0023 #BTC (or 230,000 #satos…
+"Satoshi Nakamoto is the name used by the unknown person or people who developed bitcoin, authored the bitcoin whit… https://t.co/91qHdMjpm7
+RT @BitcoinNorth: If you divided all currently mined #Bitcoin by the population of the planet there are only 0.0023 #BTC (or 230,000 #satos…
+RT @BitcoinNorth: If you divided all currently mined #Bitcoin by the population of the planet there are only 0.0023 #BTC (or 230,000 #satos…
+RT @BitcoinNorth: If you divided all currently mined #Bitcoin by the population of the planet there are only 0.0023 #BTC (or 230,000 #satos…
+If you divided all currently mined #Bitcoin by the population of the planet there are only 0.0023 #BTC (or 230,000… https://t.co/WseDtbzrVc
+RT @XiuanL: I want to see how many, truly believe in #crypto?
+Is it just something we will forget in 5 years or are #Cryptocurrency's here…
+RT @XiuanL: I want to see how many, truly believe in #crypto?
+Is it just something we will forget in 5 years or are #Cryptocurrency's here…
+RT @XiuanL: I want to see how many, truly believe in #crypto?
+Is it just something we will forget in 5 years or are #Cryptocurrency's here…
+RT @XiuanL: I want to see how many, truly believe in #crypto?
+Is it just something we will forget in 5 years or are #Cryptocurrency's here…
+RT @XiuanL: I want to see how many, truly believe in #crypto?
+Is it just something we will forget in 5 years or are #Cryptocurrency's here…
+RT @XiuanL: I want to see how many, truly believe in #crypto?
+Is it just something we will forget in 5 years or are #Cryptocurrency's here…
+I want to see how many, truly believe in #crypto?
+Is it just something we will forget in 5 years or are… https://t.co/SNqqkL7UaB
+Still buying dips, still buying more #cardano under 1500 #Satoshi and still not selling for less than 2000...only t… https://t.co/gIHcmecwBI
+RT @BitcoinNorth: 641 days until the next Bitcoin halving. HODL 1 #Bitcoin or 100,000,000 #satoshi and be patient.  https://t.co/P1cNhwZRDZ
+RT @BitcoinNorth: 641 days until the next Bitcoin halving. HODL 1 #Bitcoin or 100,000,000 #satoshi and be patient.  https://t.co/P1cNhwZRDZ
+641 days until the next Bitcoin halving. HODL 1 #Bitcoin or 100,000,000 #satoshi and be patient.  https://t.co/P1cNhwZRDZ
+RT @realSatoshiN: Seen the abuses in many #altcoins I do #favor #ICO #regulation. The #crypto #market has #enough #altcoins and I still #su…
+Seen the abuses in many #altcoins I do #favor #ICO #regulation. The #crypto #market has #enough #altcoins and I sti… https://t.co/BBrA5wxf2i
+It’s clear to me that Satoshi Nakamoto is an alias. So who is he/she? A MIT professor or a 500 pound slob in a base… https://t.co/MM3gj5yKeT
+RT @khunFYP: Those denying that there is a very high probability for Craig being #Satoshi, or even screaming #FRAUD(!), can only be declare…
+Those denying that there is a very high probability for Craig being #Satoshi, or even screaming #FRAUD(!), can only… https://t.co/tNf59ALu8s
+WHO IS SATOSHI ?
+the human, internet and #bitcoin
+-&gt; new world order #bluebeam project and soon #satoshi in the sky… https://t.co/MpPKmp9IVe
+RT @infobytesTV: A little teaser for a video we are currently working on. subscribe to our channel on YouTube - or follow on Twitter to be…
+A little teaser for a video we are currently working on. subscribe to our channel on YouTube - or follow on Twitter… https://t.co/lio6kJvWum
+
+
+
+
+
+
+#Test2
+import tweepy
+obj=200
+
+for status in tweepy.Cursor(extractor.user_timeline).items(500000000):
+  print(status)
+pass
+
+
+#this method is used if you want to iterate through the statues in the authenticated user’s timeline. 
+
+Status(contributors=None, truncated=False, text=u'tweepy + oauth!', is_quote_status=False, in_reply_to_status_id=None, id=979455532955136000, favorite_count=0, _api=<tweepy.api.API object at 0x7f76fb46a9d0>, author=User(follow_request_sent=False, has_extended_profile=False, profile_use_background_image=True, _json={u'follow_request_sent': False, u'has_extended_profile': False, u'profile_use_background_image': True, u'default_profile_image': True, u'id': 898570198923452417, u'profile_background_image_url_https': None, u'verified': False, u'translator_type': u'none', u'profile_text_color': u'333333', u'profile_image_url_https': u'https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png', u'profile_sidebar_fill_color': u'DDEEF6', u'entities': {u'description': {u'urls': []}}, u'followers_count': 0, u'profile_sidebar_border_color': u'C0DEED', u'id_str': u'898570198923452417', u'profile_background_color': u'F5F8FA', u'listed_count': 0, u'is_translation_enabled': False, u'utc_offset': None, u'statuses_count': 1, u'description': u'', u'friends_count': 32, u'location': u'', u'profile_link_color': u'1DA1F2', u'profile_image_url': u'http://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png', u'following': False, u'geo_enabled': False, u'profile_background_image_url': None, u'screen_name': u'Watts501', u'lang': u'en', u'profile_background_tile': False, u'favourites_count': 0, u'name': u'Tanvi Watts', u'notifications': False, u'url': None, u'created_at': u'Fri Aug 18 15:40:04 +0000 2017', u'contributors_enabled': False, u'time_zone': None, u'protected': False, u'default_profile': True, u'is_translator': False}, time_zone=None, id=898570198923452417, description=u'', _api=<tweepy.api.API object at 0x7f76fb46a9d0>, verified=False, profile_text_color=u'333333', profile_image_url_https=u'https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png', profile_sidebar_fill_color=u'DDEEF6', is_translator=False, geo_enabled=False, entities={u'description': {u'urls': []}}, followers_count=0, protected=False, id_str=u'898570198923452417', default_profile_image=True, listed_count=0, lang=u'en', utc_offset=None, statuses_count=1, profile_background_color=u'F5F8FA', friends_count=32, profile_link_color=u'1DA1F2', profile_image_url=u'http://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png', notifications=False, default_profile=True, profile_background_image_url_https=None, profile_background_image_url=None, name=u'Tanvi Watts', is_translation_enabled=False, profile_background_tile=False, favourites_count=0, screen_name=u'Watts501', url=None, created_at=datetime.datetime(2017, 8, 18, 15, 40, 4), contributors_enabled=False, location=u'', profile_sidebar_border_color=u'C0DEED', translator_type=u'none', following=False), _json={u'contributors': None, u'truncated': False, u'text': u'tweepy + oauth!', u'is_quote_status': False, u'in_reply_to_status_id': None, u'id': 979455532955136000, u'favorite_count': 0, u'source': u'<a href="https://www.yahoo.co.in" rel="nofollow">Tannavee</a>', u'retweeted': False, u'coordinates': None, u'entities': {u'symbols': [], u'user_mentions': [], u'hashtags': [], u'urls': []}, u'in_reply_to_screen_name': None, u'in_reply_to_user_id': None, u'retweet_count': 0, u'id_str': u'979455532955136000', u'favorited': False, u'user': {u'follow_request_sent': False, u'has_extended_profile': False, u'profile_use_background_image': True, u'default_profile_image': True, u'id': 898570198923452417, u'profile_background_image_url_https': None, u'verified': False, u'translator_type': u'none', u'profile_text_color': u'333333', u'profile_image_url_https': u'https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png', u'profile_sidebar_fill_color': u'DDEEF6', u'entities': {u'description': {u'urls': []}}, u'followers_count': 0, u'profile_sidebar_border_color': u'C0DEED', u'id_str': u'898570198923452417', u'profile_background_color': u'F5F8FA', u'listed_count': 0, u'is_translation_enabled': False, u'utc_offset': None, u'statuses_count': 1, u'description': u'', u'friends_count': 32, u'location': u'', u'profile_link_color': u'1DA1F2', u'profile_image_url': u'http://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png', u'following': False, u'geo_enabled': False, u'profile_background_image_url': None, u'screen_name': u'Watts501', u'lang': u'en', u'profile_background_tile': False, u'favourites_count': 0, u'name': u'Tanvi Watts', u'notifications': False, u'url': None, u'created_at': u'Fri Aug 18 15:40:04 +0000 2017', u'contributors_enabled': False, u'time_zone': None, u'protected': False, u'default_profile': True, u'is_translator': False}, u'geo': None, u'in_reply_to_user_id_str': None, u'lang': u'en', u'created_at': u'Thu Mar 29 20:29:31 +0000 2018', u'in_reply_to_status_id_str': None, u'place': None}, coordinates=None, entities={u'symbols': [], u'user_mentions': [], u'hashtags': [], u'urls': []}, in_reply_to_screen_name=None, id_str=u'979455532955136000', retweet_count=0, in_reply_to_user_id=None, favorited=False, source_url=u'https://www.yahoo.co.in', user=User(follow_request_sent=False, has_extended_profile=False, profile_use_background_image=True, _json={u'follow_request_sent': False, u'has_extended_profile': False, u'profile_use_background_image': True, u'default_profile_image': True, u'id': 898570198923452417, u'profile_background_image_url_https': None, u'verified': False, u'translator_type': u'none', u'profile_text_color': u'333333', u'profile_image_url_https': u'https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png', u'profile_sidebar_fill_color': u'DDEEF6', u'entities': {u'description': {u'urls': []}}, u'followers_count': 0, u'profile_sidebar_border_color': u'C0DEED', u'id_str': u'898570198923452417', u'profile_background_color': u'F5F8FA', u'listed_count': 0, u'is_translation_enabled': False, u'utc_offset': None, u'statuses_count': 1, u'description': u'', u'friends_count': 32, u'location': u'', u'profile_link_color': u'1DA1F2', u'profile_image_url': u'http://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png', u'following': False, u'geo_enabled': False, u'profile_background_image_url': None, u'screen_name': u'Watts501', u'lang': u'en', u'profile_background_tile': False, u'favourites_count': 0, u'name': u'Tanvi Watts', u'notifications': False, u'url': None, u'created_at': u'Fri Aug 18 15:40:04 +0000 2017', u'contributors_enabled': False, u'time_zone': None, u'protected': False, u'default_profile': True, u'is_translator': False}, time_zone=None, id=898570198923452417, description=u'', _api=<tweepy.api.API object at 0x7f76fb46a9d0>, verified=False, profile_text_color=u'333333', profile_image_url_https=u'https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png', profile_sidebar_fill_color=u'DDEEF6', is_translator=False, geo_enabled=False, entities={u'description': {u'urls': []}}, followers_count=0, protected=False, id_str=u'898570198923452417', default_profile_image=True, listed_count=0, lang=u'en', utc_offset=None, statuses_count=1, profile_background_color=u'F5F8FA', friends_count=32, profile_link_color=u'1DA1F2', profile_image_url=u'http://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png', notifications=False, default_profile=True, profile_background_image_url_https=None, profile_background_image_url=None, name=u'Tanvi Watts', is_translation_enabled=False, profile_background_tile=False, favourites_count=0, screen_name=u'Watts501', url=None, created_at=datetime.datetime(2017, 8, 18, 15, 40, 4), contributors_enabled=False, location=u'', profile_sidebar_border_color=u'C0DEED', translator_type=u'none', following=False), geo=None, in_reply_to_user_id_str=None, lang=u'en', created_at=datetime.datetime(2018, 3, 29, 20, 29, 31), in_reply_to_status_id_str=None, place=None, source=u'Tannavee', retweeted=False)
+
+
+
+
+
+
+#Method to get 3210 latest tweets
+
+extractor=twitter_setup()
+#Create a list to hold all the tweepy tweets
+tweets= []
+
+#Retrieve the newest tweets
+new_tweets= extractor.user_timeline(screen_name="BTCNewsUpdates", count=200)
+
+#save the tweets in the array created
+
+tweets.extend(new_tweets)
+
+#Save the oldest tweet id less one
+oldest= tweets[-1].id - 1
+
+while(len(new_tweets)>0):
+  print "Retrieving tweets before %s" % (oldest)
+ #to prevent duplicates we use max_id paramater
+  new_tweets= extractor.user_timeline(screen_name="BTCNewsUpdates", count=200, max_id=oldest)
+  tweets.extend(new_tweets)
+  oldest= tweets[-1].id -1
+  print("%s tweets downloaded so far" %(len(tweets)))
+  
+  #transform to 2d array that will populate the csv
+  outtweets =  [[tweet.id_str, tweet.created_at, tweet.text.encode("utf-8")] for tweet in tweets]
+
+
+Retrieving tweets before 1007188493880250367
+400 tweets downloaded so far
+Retrieving tweets before 1005473507638116351
+599 tweets downloaded so far
+Retrieving tweets before 1004452943549083647
+799 tweets downloaded so far
+Retrieving tweets before 1001446213185622015
+998 tweets downloaded so far
+Retrieving tweets before 998915963314688000
+1198 tweets downloaded so far
+Retrieving tweets before 997243688953761791
+1398 tweets downloaded so far
+Retrieving tweets before 996092273816465407
+1598 tweets downloaded so far
+Retrieving tweets before 994281058823819263
+1796 tweets downloaded so far
+Retrieving tweets before 993181739139915775
+1995 tweets downloaded so far
+Retrieving tweets before 992828867730690047
+2195 tweets downloaded so far
+Retrieving tweets before 992108394055073791
+2395 tweets downloaded so far
+Retrieving tweets before 991997187046412287
+2595 tweets downloaded so far
+Retrieving tweets before 991710600903430143
+2795 tweets downloaded so far
+Retrieving tweets before 991324481753759743
+2995 tweets downloaded so far
+Retrieving tweets before 990918574482083840
+3195 tweets downloaded so far
+Retrieving tweets before 990584547136983039
+3208 tweets downloaded so far
+Retrieving tweets before 990584239136616450
+3208 tweets downloaded so far
+
+
+
+
+
+
+print("Number of tweets extracted: {}.\n".format(len(tweets)))
+
+Number of tweets extracted: 3208.
+
+
+
+
+
+
+import pandas as pd
+#Now we use Pandas to create a data framework
+data = pd.DataFrame(data=[tweet.text for tweet in tweets], columns=["Tweets"])
+
+#Print first 10 elements of the dataframe
+display(data.head(10))
+
+                                              Tweets
+0  RT @CashPayWallet: Exciting! #SpendandReplace ...
+1  @sashandiggers @Zigadeebong @MADinMelbourne @D...
+2  @DxSpivey @btcfork @SatoshiLite https://t.co/h...
+3  RT @CoinsquareNews: Some say #Bitcoincash is t...
+4  @TheNoctus @CoinsquareNews @Coinsquare No conf...
+5  @Orionstarzz @CoinsquareNews @Coinsquare https...
+6  @CryptoBacon @BTCorBCH @notgrubles @bhec39 @ro...
+7                   @MennoPP https://t.co/hQsUrWqslK
+8  RT @Coins4Clothes: Real life has caught up wit...
+9  @Richard05271450 @BitcoinCom @rogerkver @nChai...
+
+
+
+
+
+#Internal Methods of a single tweet object
+print(dir(tweets[0]))
+
+['__class__', '__delattr__', '__dict__', '__doc__', '__eq__', '__format__', '__getattribute__', '__getstate__', '__hash__', '__init__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', '_api', '_json', 'author', 'contributors', 'coordinates', 'created_at', 'destroy', 'entities', 'favorite', 'favorite_count', 'favorited', 'geo', 'id', 'id_str', 'in_reply_to_screen_name', 'in_reply_to_status_id', 'in_reply_to_status_id_str', 'in_reply_to_user_id', 'in_reply_to_user_id_str', 'is_quote_status', 'lang', 'parse', 'parse_list', 'place', 'possibly_sensitive', 'retweet', 'retweet_count', 'retweeted', 'retweeted_status', 'retweets', 'source', 'source_url', 'text', 'truncated', 'user']
+
+
+
+
+
+print(tweets[0].id)
+print(tweets[0].created_at)
+print(tweets[0].source)
+print(tweets[0].favorite_count)
+print(tweets[0].retweet_count)
+print(tweets[0].geo)
+print(tweets[0].coordinates)
+
+1010811375910825984
+2018-06-24 09:06:26
+TweetDeck
+0
+30
+None
+None
+
+
+
+
+
+print(tweets[0].entities)
+print(tweets[1].text)
+
+{u'symbols': [], u'user_mentions': [{u'id': 984551766141362176, u'indices': [3, 17], u'id_str': u'984551766141362176', u'screen_name': u'CashPayWallet', u'name': u'CashPay'}], u'hashtags': [{u'indices': [29, 45], u'text': u'SpendandReplace'}], u'urls': [{u'url': u'https://t.co/oIVzqH4V9U', u'indices': [102, 125], u'expanded_url': u'https://www.cashpay.solutions/#spendandreplace', u'display_url': u'cashpay.solutions/#spendandrepla\u2026'}]}
+@sashandiggers @Zigadeebong @MADinMelbourne @Devar @Bitcoin_is_Cash @justicemate 😂
+
+
+
+
+
+data['length'] = np.array([len(tweet.text) for tweet in tweets])
+data['ID'] = np.array([tweet.id for tweet in tweets])
+data['Date'] = np.array([tweet.created_at for tweet in tweets])
+data['Source'] = np.array([tweet.source for tweet in tweets])
+data['Likes'] = np.array([tweet.favorite_count for tweet in tweets])
+data['Retweets'] = np.array([tweet.retweet_count for tweet in tweets])
+
+
+
+
+
+
+
+display(data.head(10))
+
+                                              Tweets  length  \
+0  RT @CashPayWallet: Exciting! #SpendandReplace ...     140   
+1  @sashandiggers @Zigadeebong @MADinMelbourne @D...      82   
+2  @DxSpivey @btcfork @SatoshiLite https://t.co/h...      55   
+3  RT @CoinsquareNews: Some say #Bitcoincash is t...     140   
+4  @TheNoctus @CoinsquareNews @Coinsquare No conf...     107   
+5  @Orionstarzz @CoinsquareNews @Coinsquare https...      64   
+6  @CryptoBacon @BTCorBCH @notgrubles @bhec39 @ro...      77   
+7                   @MennoPP https://t.co/hQsUrWqslK      32   
+8  RT @Coins4Clothes: Real life has caught up wit...     140   
+9  @Richard05271450 @BitcoinCom @rogerkver @nChai...      92   
+
+                    ID                Date     Source  Likes  Retweets  
+0  1010811375910825984 2018-06-24 09:06:26  TweetDeck      0        30  
+1  1010160831361966080 2018-06-22 14:01:24  TweetDeck      2         0  
+2  1009336041159954432 2018-06-20 07:23:59  TweetDeck      0         0  
+3  1009335945609601024 2018-06-20 07:23:36  TweetDeck      0        20  
+4  1009335870305038336 2018-06-20 07:23:18  TweetDeck      2         1  
+5  1009335747961376768 2018-06-20 07:22:49  TweetDeck      1         0  
+6  1009330033276739584 2018-06-20 07:00:07  TweetDeck      0         0  
+7  1009329918545682432 2018-06-20 06:59:39  TweetDeck      0         0  
+8  1009329095572893696 2018-06-20 06:56:23  TweetDeck      0        12  
+9  1009329066036682752 2018-06-20 06:56:16  TweetDeck      1         0  
+
+
+
+
+
+#Calculate average length of tweets
+mean = np.mean(data['length'])
+print("The length of average tweets: {}".format(mean))
+
+The length of average tweets: 114.592581047
+
+
+
+
+
+#Maximum favorite tweets and retweets
+fav_max = np.max(data['Likes'])
+re_max = np.max(data['Retweets'])
+
+fav = data[data.Likes == fav_max].index[0]
+rt = data[data.Retweets == re_max].index[0]
+
+#max favorite
+print(data['Tweets'][fav])
+print("Number of likes : {}".format(fav_max))
+print("This has {} Characters".format(data['length'][fav]))
+
+#max retweets
+print(data['Tweets'][rt])
+print("Number of retweets: {}".format(re_max))
+print("This has {} Characters".format(data['length'][rt]))
+
+BCH Ready For Paypal Busting 240 Transactions Per Seconds.
+
+The May 15th upgrade raises the block size limit to 32M… https://t.co/zunqu3xzr1
+Number of likes : 236
+This has 140 Characters
+RT @chordbug: I wrote a sorting function that only works when you're looking at it: https://t.co/vNMmXW8qzL
+Number of retweets: 3265
+This has 107 Characters
+
+
+
+
+
+sources=[]
+for source in data['Source']:
+    if source not in sources:
+      sources.append(source)
+      #Printing all the sources
+print("All the sources:")
+for source in sources:
+  print("-> {}".format(source))
+
+All the sources:
+-> TweetDeck
+-> Twitter Web Client
+
+
+
+
+
+#from textblob import TextBlob
+import re
+
+def clean_tweet(tweet):
+    #removing all the special characters and links fron the tweets using regex
+    return ' '.join(re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)", " ", tweet).split())
+
+def analize_sentiment(tweet):
+    #Using TextBlob for sentiment analysis
+    analysis = TextBlob(clean_tweet(tweet))
+    if analysis.sentiment.polarity > 0:
+        return 1
+    elif analysis.sentiment.polarity == 0:
+        return 0
+    else:
+        return -1
+
+
+
+
+
+
+
+#analysing the tweets from the data set
+data['Sentiment'] = np.array([analize_sentiment(tweet) for tweet in data['Tweets']])
+#displaying first 10 results
+display(data.head(10))
+
+                                              Tweets  length  \
+0  RT @CashPayWallet: Exciting! #SpendandReplace ...     140   
+1  @sashandiggers @Zigadeebong @MADinMelbourne @D...      82   
+2  @DxSpivey @btcfork @SatoshiLite https://t.co/h...      55   
+3  RT @CoinsquareNews: Some say #Bitcoincash is t...     140   
+4  @TheNoctus @CoinsquareNews @Coinsquare No conf...     107   
+5  @Orionstarzz @CoinsquareNews @Coinsquare https...      64   
+6  @CryptoBacon @BTCorBCH @notgrubles @bhec39 @ro...      77   
+7                   @MennoPP https://t.co/hQsUrWqslK      32   
+8  RT @Coins4Clothes: Real life has caught up wit...     140   
+9  @Richard05271450 @BitcoinCom @rogerkver @nChai...      92   
+
+                    ID                Date     Source  Likes  Retweets  \
+0  1010811375910825984 2018-06-24 09:06:26  TweetDeck      0        30   
+1  1010160831361966080 2018-06-22 14:01:24  TweetDeck      2         0   
+2  1009336041159954432 2018-06-20 07:23:59  TweetDeck      0         0   
+3  1009335945609601024 2018-06-20 07:23:36  TweetDeck      0        20   
+4  1009335870305038336 2018-06-20 07:23:18  TweetDeck      2         1   
+5  1009335747961376768 2018-06-20 07:22:49  TweetDeck      1         0   
+6  1009330033276739584 2018-06-20 07:00:07  TweetDeck      0         0   
+7  1009329918545682432 2018-06-20 06:59:39  TweetDeck      0         0   
+8  1009329095572893696 2018-06-20 06:56:23  TweetDeck      0        12   
+9  1009329066036682752 2018-06-20 06:56:16  TweetDeck      1         0   
+
+   Sentiment  
+0          1  
+1          0  
+2          0  
+3         -1  
+4          1  
+5          0  
+6          0  
+7          0  
+8          1  
+9          0  
+
+
+
+
+
+
+pos_tweets = [ tweet for index, tweet in enumerate(data['Tweets']) if data['Sentiment'][index] > 0]
+neu_tweets = [ tweet for index, tweet in enumerate(data['Tweets']) if data['Sentiment'][index] == 0]
+neg_tweets = [ tweet for index, tweet in enumerate(data['Tweets']) if data['Sentiment'][index] < 0]
+
+
+
+
+
+
+
+print("Percentage of positive tweets: {}%".format(len(pos_tweets)*100/len(data['Tweets'])))
+print("Percentage of neutral tweets: {}%".format(len(neu_tweets)*100/len(data['Tweets'])))
+print("Percentage de negative tweets: {}%".format(len(neg_tweets)*100/len(data['Tweets'])))
+
+Percentage of positive tweets: 22%
+Percentage of neutral tweets: 67%
+Percentage de negative tweets: 9%
+
+
